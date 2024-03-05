@@ -164,6 +164,7 @@ const Chat: React.FC<IChat> = props => {
   useEffect(() => {
     if (conversation.data?.length) return;
     const app = application?.data?.Application?.getApplication;
+    if (!app?.metadata.name) return;
     const defaultPrologue = I18N.template(I18N.Chat.ninHaoWoShiA, {
       val1: `${app?.metadata.displayName || app?.metadata.name}${app?.metadata.description ? `\n\n${app?.metadata.description}` : ''}`,
     });

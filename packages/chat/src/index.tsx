@@ -15,6 +15,7 @@ import {
   ChatListProps,
   ChatMessage,
   CopyButton,
+  GradientButton,
   Highlighter,
   ThemeProvider,
   useControls,
@@ -26,6 +27,7 @@ import { sdk } from '@yuntijs/arcadia-bff-sdk';
 import { Spin, Tag, UploadFile, message } from 'antd';
 import classNames from 'classnames';
 import { throttle } from 'lodash';
+import { StopCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import ChatInputBottomAddons from './ChatInputBottomAddons';
@@ -88,7 +90,7 @@ const scrollToBottom = throttle(() => {
 }, 1000);
 let scrollToBottomTimeout: undefined | ReturnType<typeof setTimeout>;
 let shouldUpdateConversationId: boolean = false;
-const ctrl = new AbortController();
+let ctrl: undefined | AbortController;
 const retry = new Retry(ctrl, 3);
 const Chat: React.FC<IChat> = props => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -253,6 +255,7 @@ const Chat: React.FC<IChat> = props => {
   );
   const fetchConversation = useCallback(
     async query => {
+      ctrl = new AbortController();
       const isDocs = Boolean(fileList?.length);
       const body = (() => {
         const _body = {
@@ -371,7 +374,7 @@ const Chat: React.FC<IChat> = props => {
     application.mutate();
     scrollToBottomTimeout = setTimeout(scrollToBottom, 100);
     return () => {
-      ctrl.abort();
+      ctrl?.abort();
       scrollToBottomTimeout && clearTimeout(scrollToBottomTimeout);
     };
   }, []);
@@ -431,6 +434,15 @@ const Chat: React.FC<IChat> = props => {
     },
     [onSend]
   );
+  const stop = useCallback(() => {
+    ctrl?.abort();
+    setConversation(conversations => {
+      return {
+        ...conversations,
+        loadingMsgId: undefined,
+      };
+    });
+  }, [ctrl, setConversation]);
   return (
     <div className="chatComponent">
       <div
@@ -518,6 +530,17 @@ const Chat: React.FC<IChat> = props => {
               onPromptClick={onPromptClick}
             />
           )}
+        {Boolean(conversation.loadingMsgId) && (
+          <GradientButton
+            className="stop"
+            icon={<StopCircle size={12} />}
+            onClick={stop}
+            size="small"
+            type="dashed"
+          >
+            {I18N.Chat.tingZhi}
+          </GradientButton>
+        )}
         <div className="inputArea">
           <ChatInputArea
             bottomAddons={
@@ -525,6 +548,7 @@ const Chat: React.FC<IChat> = props => {
                 appData={appData}
                 fileList={fileList}
                 input={input}
+                loading={Boolean(conversation.loadingMsgId)}
                 onFileListChange={onFileListChange}
                 onSend={onSend}
               />
@@ -550,7 +574,7 @@ const ChatComponent: React.FC<IChat> = props => {
     setRefresh(true);
     refreshTimeout = setTimeout(setRefresh.bind('', false), 500);
     tmpRefresh = props.refresh;
-    ctrl.abort(); // 正在生成的对话取消
+    ctrl?.abort(); // 正在生成的对话取消
     return () => {
       refreshTimeout && clearTimeout(refreshTimeout);
     };

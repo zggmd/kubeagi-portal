@@ -21,8 +21,7 @@ import React, { FC, ReactNode } from 'react';
 
 import I18N from '../utils/kiwiI18N';
 import { Reference } from './index';
-
-// import './index.less';
+import {useRefStyles} from "./index.style";
 
 const getRelColor = (score: number) => {
   if (score < 0.5) {
@@ -44,10 +43,11 @@ interface IRefContent {
   loading: boolean;
 }
 const RefContent: FC<IRefContent> = props => {
+  const {styles} = useRefStyles();
   const { reference, index, open, loading, debug, children } = props;
   const content = reference.content ? (
     <Spin spinning={loading}>
-      <div className="popContent">
+      <div className={styles.popContent}>
         {reference.content ? (
           <Typography.Title level={4}>
             {I18N.Chat.yinYongShuJu} [{index}]
@@ -55,7 +55,7 @@ const RefContent: FC<IRefContent> = props => {
         ) : (
           '-'
         )}
-        <Divider className="divider" />
+        <Divider className={styles.divider} />
         {Boolean(debug) && (
           <>
             <Typography.Title level={5}>{I18N.Chat.zhiShiKu}</Typography.Title>
@@ -65,7 +65,7 @@ const RefContent: FC<IRefContent> = props => {
                 {reference.qa_file_path}
               </Typography.Text>
             </Space>
-            <Space className="relLine">
+            <Space className={styles.relLine}>
               <FieldNumberOutlined />
               <Tag color={getRelColor(reference.score)}>
                 {I18N.Chat.xiangSiDu}
@@ -73,7 +73,7 @@ const RefContent: FC<IRefContent> = props => {
               </Tag>
             </Space>
             <div>
-              <Typography.Text className="q" strong>
+              <Typography.Text className={styles.q} strong>
                 {reference.question}
               </Typography.Text>
               <Button icon={<EditOutlined />} type="text" />

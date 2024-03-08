@@ -14,10 +14,8 @@ import type { UploadFile, UploadProps } from 'antd';
 import { ArrowBigUp, CornerDownLeft } from 'lucide-react';
 import * as React from 'react';
 import { useCallback } from 'react';
-
+import useStyles, {GlobalStyles} from './index.style'
 import I18N from '../utils/kiwiI18N';
-
-// import './index.less';
 
 interface IChatInputBottomAddons {
   appData: any;
@@ -30,6 +28,7 @@ interface IChatInputBottomAddons {
 
 const ChatInputBottomAddons: React.FC<IChatInputBottomAddons> = props => {
   const { appData, onSend, onFileListChange, input, fileList, loading } = props;
+  const {styles} = useStyles();
   const handleChange: UploadProps['onChange'] = useCallback(
     info => {
       onFileListChange?.(info.fileList);
@@ -37,10 +36,11 @@ const ChatInputBottomAddons: React.FC<IChatInputBottomAddons> = props => {
     [onFileListChange]
   );
   return (
-    <Flex align="center" className="sendAction" gap="large" justify="end">
+    <Flex align="center" className={styles.sendAction} gap="large" justify="end">
+      <GlobalStyles />
       <Upload
         accept=".pdf"
-        className="upload-list-inline"
+        className={styles.uploadListInline}
         fileList={fileList}
         listType="picture"
         multiple
@@ -48,7 +48,7 @@ const ChatInputBottomAddons: React.FC<IChatInputBottomAddons> = props => {
       >
         <Button icon={<PaperClipOutlined style={{ fontSize: 17 }} />} type="text"></Button>
       </Upload>
-      <span className="keyBindings">
+      <span className={styles.keyBindings}>
         <CornerDownLeft size={12} />
         <span>{I18N.Chat.faSong2}</span>
         <ArrowBigUp size={12} />

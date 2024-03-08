@@ -11,9 +11,8 @@
 import { ChatMessage } from '@lobehub/ui';
 import { Divider, Space } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-
+import useStyles from "./index.style";
 import I18N from '../utils/kiwiI18N';
-// import './index.less';
 import RefContent from './renderContent';
 
 export type Reference = {
@@ -36,6 +35,7 @@ let mouseEnterTimeout;
 let tempSetNum;
 const getTempSetNum = () => tempSetNum;
 const RenderReferences: FC<IRenderReferences> = props => {
+  const {styles} = useStyles();
   const { chat, debug } = props;
   const [_item, setItem] = useState<{ item: Reference; index: number }>();
   const [clear, setClear] = useState<number>(0);
@@ -66,8 +66,8 @@ const RenderReferences: FC<IRenderReferences> = props => {
     return null;
   }
   return (
-    <div className="references">
-      <Divider className="referencesTxt" dashed orientation="left" />
+    <div className={styles.references}>
+      <Divider className={styles.referencesTxt} dashed orientation="left" />
       <RefContent
         debug={debug}
         index={_item?.index + 1 || 0}
@@ -77,7 +77,7 @@ const RenderReferences: FC<IRenderReferences> = props => {
         reference={_item?.item || ({} as Reference)}
       >
         <Space
-          className="referencesList"
+          className={styles.referencesList}
           direction="horizontal"
           onMouseEnter={() => {
             setClear(2);

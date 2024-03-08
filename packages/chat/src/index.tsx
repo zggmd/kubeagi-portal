@@ -34,12 +34,12 @@ import ChatInputBottomAddons from './ChatInputBottomAddons';
 import PromptStarter from './PromptStarter';
 import RenderReferences, { Reference } from './References';
 import { formatJson, getCvsMeta } from './helper';
-// import './index.less';
 import Retry from './retry';
 import { fetchEventSource } from './utils/fetchEventSource';
 import useGetCommonData from './utils/hooks/useGetCommonData';
 import I18N from './utils/kiwiI18N';
 import request from './utils/request';
+import useStyles, {GlobalStyles} from "./index.style";
 
 interface IChat {
   appName: string;
@@ -93,6 +93,7 @@ let shouldUpdateConversationId: boolean = false;
 let ctrl: undefined | AbortController;
 const retry = new Retry(ctrl, 3);
 const Chat: React.FC<IChat> = props => {
+  const {styles} = useStyles();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [showNextGuide, setShowNextGuide] = useState(true);
   const [conversation, setConversation] = useState<{
